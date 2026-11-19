@@ -27,3 +27,10 @@ dist-ssr
 *.tgz
 
 __pycache__/
+maia-build/
+maia-evidence/
+
+maia-widget-build/
+
+web/
+tests/fixtures/

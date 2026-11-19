@@ -1,0 +1,62 @@
+[
+  {
+    "file": "directions.webp",
+    "bytes": 319134,
+    "width": 1254,
+    "decodedRGBABytes": 6290064
+  },
+  {
+    "file": "directions-small.webp",
+    "bytes": 87550,
+    "width": 576,
+    "decodedRGBABytes": 1327104
+  },
+  {
+    "file": "reactions.webp",
+    "bytes": 300898,
+    "width": 1254,
+    "decodedRGBABytes": 6290064
+  },
+  {
+    "file": "reactions-small.webp",
+    "bytes": 85162,
+    "width": 576,
+    "decodedRGBABytes": 1327104
+  },
+  {
+    "file": "actions.webp",
+    "bytes": 329572,
+    "width": 1254,
+    "decodedRGBABytes": 6290064
+  },
+  {
+    "file": "actions-small.webp",
+    "bytes": 91244,
+    "width": 576,
+    "decodedRGBABytes": 1327104
+  },
+  {
+    "file": "expressions.webp",
+    "bytes": 343650,
+    "width": 1254,
+    "decodedRGBABytes": 6290064
+  },
+  {
+    "file": "expressions-small.webp",
+    "bytes": 94880,
+    "width": 576,
+    "decodedRGBABytes": 1327104
+  },
+  {
+    "file": "behaviours.webp",
+    "bytes": 497154,
+    "width": 1254,
+    "decodedRGBABytes": 6290064
+  },
+  {
+    "file": "behaviours-small.webp",
+    "bytes": 128342,
+    "width": 576,
+    "decodedRGBABytes": 1327104
+  }
+]

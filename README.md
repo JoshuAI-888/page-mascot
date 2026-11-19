@@ -6,6 +6,38 @@ An interactive character that watches the cursor and blinks when you poke it.
 
 **[See the fifty-two &rarr;](https://koboyo.com/page-mascot)**
 
+## Māia — optimized webpage companion
+
+This fork includes **Māia 02, The Collaborator**, with all **28 actions/reactions**, nine
+gaze directions, compact WebP artwork and lazy loading. It pauses offscreen/in hidden
+tabs and respects reduced motion. Initial artwork is 173 KB; all five sheets total 487 KB.
+
+Install this fork (the upstream npm package does not include Māia):
+
+```sh
+npm install github:JoshuAI-888/page-mascot
+```
+
+```tsx
+import { MaiaCompanion } from 'page-mascot/maia'
+
+<MaiaCompanion expression="Welcoming" />
+```
+
+For **plain HTML / WordPress**, run `npm ci` and `npm run build:maia:web`, copy `web/`
+to your site's `/maia/` directory, then add:
+
+```html
+<script type="module" src="/maia/maia.js"></script>
+<maia-mascot size="118"></maia-mascot>
+```
+
+**[Full integration guide, expression list and examples →](docs/maia.md)**
+
+The larger character studio is available with `npm run dev:maia`. Artwork is a review
+candidate: minor feather/scarf variation and stepped motion remain. See
+[artwork provenance and rights](maia/ARTWORK.md).
+
 ## Install
 
 ```bash
@@ -73,6 +105,11 @@ UI.
 | `size` | `140` | px, square |
 | `label` | `'mascot'` | what a screen reader calls it |
 | `className` | | |
+| `actions`, `atlases` | unset | optional named 3×3 sheets for additional states |
+| `frame` | unset | controlled `{ sheet, index }` pose |
+| `lazy` | `false` | render only the active sheet; preload before changing controlled frames |
+| `tracking`, `motion` | `true` | enable pointer tracking / click squash |
+| `onBoop` | unset | optional custom click controller |
 
 Tracking switches off without a fine pointer, and the click squash honours
 `prefers-reduced-motion`.

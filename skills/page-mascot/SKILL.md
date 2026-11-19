@@ -14,6 +14,13 @@ and nothing has to know its name.
 
 ## Which route
 
+- **The user asks for Māia / Maia / the kea** — use the existing optimized Māia 02
+  component in this fork. Follow `docs/maia.md` at the repository root: install
+  `github:JoshuAI-888/page-mascot`, import `MaiaCompanion` from `page-mascot/maia`,
+  or build the standalone `<maia-mascot>` module for plain HTML. All 28 states and
+  compact assets already exist; do not generate new artwork or embed the whole studio.
+  Keep the character-consistency limitations in `maia/ARTWORK.md` visible in reviews.
+
 - **The user names a character, or would take one that exists** -- *Use one that is
   drawn*. No Python, no API key, works in any React project. This is the common case.
 - **The user wants something new, or their own likeness** -- *Draw a new one*, then

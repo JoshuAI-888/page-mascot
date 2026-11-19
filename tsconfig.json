@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "lib": ["ES2022", "DOM"],
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
     "module": "esnext",
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
-    "types": ["vite/client", "node"],
+    "types": [
+      "vite/client",
+      "node"
+    ],
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -14,5 +20,14 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src", "site", "vite.config.ts"]
+  "include": [
+    "src",
+    "site",
+    "vite.config.ts",
+    "maia",
+    "vite.maia.config.ts",
+    "vite.widget.config.ts",
+    "web-src",
+    "vite.maia-web.config.ts"
+  ]
 }
