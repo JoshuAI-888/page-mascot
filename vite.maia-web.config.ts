@@ -7,6 +7,9 @@ export default defineConfig({
     async closeBundle() {
       const example = await readFile('examples/maia.html', 'utf8')
       await writeFile('web/index.html', example.replace('../web/maia.js', './maia.js'))
+      const notices = await Promise.all(['LICENSE', 'node_modules/react/LICENSE', 'node_modules/react-dom/LICENSE'].map(file => readFile(file, 'utf8')))
+      await writeFile('web/LICENSES.txt', notices.join('\n\n---\n\n'))
+      await writeFile('web/ARTWORK.md', await readFile('maia/ARTWORK.md', 'utf8'))
     },
   }],
   build: {
