@@ -84,10 +84,22 @@ export type MascotProps = {
   className?: string
   /** What a screen reader calls it. */
   label?: string
+  /** Optional third atlas for character-specific actions. */
+  actions?: string
+  /** Additional named 3x3 atlases. Reserved names use the explicit props above. */
+  atlases?: Record<string, string>
+  /** Render only the active sheet; preload before changing controlled frames. */
+  lazy?: boolean
+  /** Controlled atlas frame; omit to use the original pointer/boop behaviour. */
+  frame?: { sheet: string; index: number } | null
+  tracking?: boolean
+  motion?: boolean
+  /** Override the native boop sequence, for a shared animation controller. */
+  onBoop?: () => void
 }
 
 export function Mascot(props: MascotProps) {
-  const { directions, reactions, size = 140, className, label = 'mascot' } = props
+  const { directions, reactions, actions, atlases = {}, lazy = false, frame, tracking = true, motion = true, onBoop, size = 140, className, label = 'mascot' } = props
 
   const buttonRef = useRef<HTMLButtonElement>(null)
   const squashRef = useRef<HTMLSpanElement>(null)
@@ -97,12 +109,13 @@ export function Mascot(props: MascotProps) {
   const [reaction, setReaction] = useState<Reaction | null>(null)
 
   useEffect(() => {
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    if (!tracking || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       return
     }
 
     let sector = -1
     let pointer: { x: number; y: number } | null = null
+    let pending = 0
 
     const aim = () => {
       const button = buttonRef.current
@@ -132,17 +145,21 @@ export function Mascot(props: MascotProps) {
 
     const onPointerMove = (event: PointerEvent) => {
       pointer = { x: event.clientX, y: event.clientY }
-      aim()
+      scheduleAim()
+    }
+    const scheduleAim = () => {
+      if (!pending) pending = requestAnimationFrame(() => { pending = 0; aim() })
     }
 
     window.addEventListener('pointermove', onPointerMove, { passive: true })
-    window.addEventListener('scroll', aim, { passive: true })
+    window.addEventListener('scroll', scheduleAim, { passive: true })
 
     return () => {
       window.removeEventListener('pointermove', onPointerMove)
-      window.removeEventListener('scroll', aim)
+      window.removeEventListener('scroll', scheduleAim)
+      cancelAnimationFrame(pending)
     }
-  }, [])
+  }, [tracking])
 
   useEffect(() => {
     return () => {
@@ -151,6 +168,10 @@ export function Mascot(props: MascotProps) {
   }, [])
 
   const boop = () => {
+    if (onBoop) {
+      onBoop()
+      return
+    }
     timersRef.current.forEach(window.clearTimeout)
     timersRef.current = []
 
@@ -173,7 +194,7 @@ export function Mascot(props: MascotProps) {
       later(BOOP_END, null)
     }
 
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (!motion || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return
     }
 
@@ -182,6 +203,9 @@ export function Mascot(props: MascotProps) {
     squashRef.current?.animate(SQUASH, { duration: SQUASH_MS, easing: 'linear' })
   }
 
+  const sheets: Record<string, string | undefined> = { ...atlases, directions, reactions, actions }
+  const activeSheet = frame?.sheet ?? (reaction ? 'reactions' : 'directions')
+  const activeIndex = frame?.index ?? (reaction ? REACTIONS.indexOf(reaction) : DIRECTIONS.indexOf(tracking ? direction : 'center'))
   // Inline styles so the file drops into any project without a CSS framework.
   return (
     <button
@@ -189,6 +213,8 @@ export function Mascot(props: MascotProps) {
       type="button"
       onClick={boop}
       aria-label={`Boop the ${label}`}
+      data-sheet={frame?.sheet ?? (reaction ? 'reactions' : 'directions')}
+      data-frame={frame?.index ?? (reaction ? REACTIONS.indexOf(reaction) : DIRECTIONS.indexOf(tracking ? direction : 'center'))}
       className={className}
       style={{
         position: 'relative',
@@ -208,12 +234,12 @@ export function Mascot(props: MascotProps) {
         ref={squashRef}
         style={{ position: 'relative', display: 'block', width: '100%', height: '100%', transformOrigin: '50% 78%' }}
       >
-        <span
+        {lazy ? <span style={{ ...layer, backgroundImage: `url(${sheets[activeSheet] || directions})`, ...cell(activeIndex) }} /> : <><span
           style={{
             ...layer,
             backgroundImage: `url(${directions})`,
-            ...cell(DIRECTIONS.indexOf(direction)),
-            opacity: reaction ? 0 : 1,
+            ...cell(frame?.sheet === 'directions' ? frame.index : DIRECTIONS.indexOf(tracking ? direction : 'center')),
+            opacity: frame ? (frame.sheet === 'directions' ? 1 : 0) : reaction ? 0 : 1,
           }}
         />
         {/* Always mounted so the sheet is fetched up front, never on the first click. */}
@@ -221,10 +247,12 @@ export function Mascot(props: MascotProps) {
           style={{
             ...layer,
             backgroundImage: `url(${reactions})`,
-            ...cell(REACTIONS.indexOf(reaction ?? 'blink')),
-            opacity: reaction ? 1 : 0,
+            ...cell(frame?.sheet === 'reactions' ? frame.index : REACTIONS.indexOf(reaction ?? 'blink')),
+            opacity: frame ? (frame.sheet === 'reactions' ? 1 : 0) : reaction ? 1 : 0,
           }}
         />
+        {actions && <span style={{ ...layer, backgroundImage: `url(${actions})`, ...cell(frame?.sheet === 'actions' ? frame.index : 0), opacity: frame?.sheet === 'actions' ? 1 : 0 }} />}
+        {Object.entries(atlases).filter(([key]) => !['directions', 'reactions', 'actions'].includes(key)).map(([key, src]) => <span key={key} style={{ ...layer, backgroundImage: `url(${src})`, ...cell(frame?.sheet === key ? frame.index : 0), opacity: frame?.sheet === key ? 1 : 0 }} />)}</>}
       </span>
     </button>
   )

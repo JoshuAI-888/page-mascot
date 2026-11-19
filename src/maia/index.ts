@@ -1,0 +1,5 @@
+'use client'
+export { MaiaCompanion } from './companion.js'
+export type { MaiaCompanionProps, MaiaHandle } from './companion.js'
+export { MAIA_EXPRESSIONS, isMaiaExpression } from './animation.js'
+export type { MaiaExpression } from './animation.js'

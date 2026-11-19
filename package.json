@@ -1,41 +1,68 @@
 {
   "name": "page-mascot",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An interactive character that watches the cursor and blinks when you poke it.",
   "license": "MIT",
   "author": "Kamran Ahmed",
   "homepage": "https://koboyo.com/page-mascot",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nilbuild/page-mascot.git"
+    "url": "git+https://github.com/JoshuAI-888/page-mascot.git"
   },
-  "keywords": ["mascot", "avatar", "react", "cursor", "sprite", "portfolio"],
+  "keywords": [
+    "mascot",
+    "avatar",
+    "react",
+    "cursor",
+    "sprite",
+    "portfolio"
+  ],
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./maia": {
+      "types": "./dist/maia/index.d.ts",
+      "default": "./dist/maia/index.js"
+    },
+    "./maia/assets/*": "./dist/maia/assets/*"
   },
   "types": "./dist/index.d.ts",
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "web",
+    "docs/maia.md",
+    "maia/ARTWORK.md"
+  ],
   "scripts": {
     "dev": "vite",
-    "sync:skill": "cp src/mascot.tsx skills/page-mascot/mascot.tsx",
-    "check:skill": "diff -q src/mascot.tsx skills/page-mascot/mascot.tsx",
-    "build": "tsc -p tsconfig.build.json && npm run sync:skill",
+    "sync:skill": "node scripts/sync-skill.mjs",
+    "check:skill": "node scripts/sync-skill.mjs --check",
+    "build": "tsc -p tsconfig.build.json && node scripts/copy-maia-assets.mjs && npm run sync:skill",
     "build:site": "npm run check:skill && npm run typecheck && vite build",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "oxlint",
     "preview": "vite preview",
     "deploy": "npm run build:site && wrangler deploy",
-    "prepack": "npm run build"
+    "prepack": "npm run build && npm run build:maia:web",
+    "dev:maia": "vite --config vite.maia.config.ts",
+    "build:maia": "npm run typecheck && vite build --config vite.maia.config.ts",
+    "build:maia:web": "vite build --config vite.maia-web.config.ts",
+    "build:maia:widget": "vite build --config vite.widget.config.ts",
+    "prepare": "npm run build",
+    "test:maia": "node --test tests/maia.test.mjs",
+    "test:maia:web": "node tests/maia-browser.mjs"
   },
   "peerDependencies": {
     "react": ">=18"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Māia · Your page companion</title>
+  <style>
+    :root{font-family:system-ui,sans-serif;color:#303c42;background:#f7f7f7}*{box-sizing:border-box}body{margin:0}main{max-width:1000px;margin:auto;padding:56px 24px 220px}h1{font-size:clamp(32px,6vw,56px);line-height:1.1;letter-spacing:-2px;max-width:700px;margin:16px 0 24px}p{line-height:1.7;max-width:660px}.eyebrow{font-size:12px;font-weight:700;letter-spacing:2px;color:#b54d00}.panel{padding:28px;border:1px solid #e3e5e6;border-radius:16px;background:white;margin-top:36px}.actions{display:flex;gap:10px;flex-wrap:wrap}button,select{font:inherit;color:inherit;background:white;border:1px solid #b8c0c5;border-radius:7px;padding:11px 15px;cursor:pointer}button:hover{background:#fdf1e8}button:focus-visible,select:focus-visible{outline:3px solid #e1690e;outline-offset:3px}label{display:block;margin:24px 0 8px;font-size:14px}select{max-width:100%}small{display:block;color:#657078;line-height:1.7;margin-top:24px}#companion{position:fixed;right:24px;bottom:24px;z-index:10;background:#fff;border:1px solid #e3e5e6;border-radius:20px;padding:12px}#close{position:absolute;right:-8px;top:-8px;padding:0;width:30px;height:30px;border-radius:50%;z-index:2}maia-mascot{display:block;width:118px;height:118px}#status{min-height:24px;font-size:14px}#show[hidden],#companion[hidden]{display:none}@media(max-width:500px){main{padding-top:30px}.panel{padding:20px}#companion{right:12px;bottom:12px}}
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">MĀIA 02 · THE COLLABORATOR</p>
+    <h1>A familiar face for your webpage</h1>
+    <p>Māia follows your pointer, responds when you say hello, and has a little expression for every moment. This page uses the small, self-hosted companion.</p>
+    <section class="panel" aria-label="Try Māia">
+      <h2>Give her a moment</h2>
+      <div class="actions"><button data-expression="Welcoming">Say hello</button><button data-expression="Thinking">Think it over</button><button data-expression="Celebrating">Celebrate</button><button id="reset">Reset</button></div>
+      <label for="expression">Explore all expressions</label>
+      <select id="expression"><option value="">Choose an expression</option></select>
+      <button id="replay">Play again</button>
+      <p id="status" role="status">Move your pointer, or click Māia.</p>
+      <button id="show" hidden>Show Māia</button>
+      <small>28 actions and reactions · Keyboard accessible · Respects reduced motion<br>Prototype artwork: small feather and scarf differences remain between poses.</small>
+    </section>
+  </main>
+  <aside id="companion" aria-label="Page companion">
+    <button id="close" aria-label="Hide Māia">×</button>
+    <maia-mascot id="maia" size="118"></maia-mascot>
+  </aside>
+  <script type="module">
+    import { MAIA_EXPRESSIONS } from '../web/maia.js'
+    const maia = document.querySelector('#maia')
+    const select = document.querySelector('#expression')
+    const status = document.querySelector('#status')
+    for (const name of MAIA_EXPRESSIONS) select.add(new Option(name, name))
+    const play = name => { if (name) { maia.play(name); select.value = name; status.textContent = name } }
+    document.querySelectorAll('[data-expression]').forEach(button => button.addEventListener('click', () => play(button.dataset.expression)))
+    select.addEventListener('change', () => play(select.value))
+    document.querySelector('#replay').addEventListener('click', () => play(select.value))
+    document.querySelector('#reset').addEventListener('click', () => { maia.reset(); select.value = ''; status.textContent = 'Ready when you are.' })
+    document.querySelector('#close').addEventListener('click', () => { document.querySelector('#companion').hidden = true; document.querySelector('#show').hidden = false })
+    document.querySelector('#show').addEventListener('click', () => { document.querySelector('#companion').hidden = false; document.querySelector('#show').hidden = true })
+    maia.addEventListener('maia-error', () => { status.textContent = 'Artwork could not load. Try the retry button beside Māia.' })
+  </script>
+</body>
+</html>
